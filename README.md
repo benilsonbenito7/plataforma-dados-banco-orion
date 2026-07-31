@@ -1,6 +1,6 @@
 # plataforma de dados para o banco orion
 ##descricao do meu projecto:
-Essa é uma plataforma que recebe dados das operações bancárias (clientes, contas, cartões, empréstimos e transações), armazena esses dados, faz tratamento e organização usando engenharia de dados, e transforma tudo em informações úteis para análise e tomada de decisão.
+Essa é uma plataforma que recebe dados das operações bancárias de um banco fictício chamado Orion (clientes, contas, cartões, empréstimos e transações), armazena esses dados, faz tratamento e organização usando engenharia de dados, e transforma tudo em informações úteis para análise e tomada de decisão.
 
 ###Fluxo:
 Operações do Banco
