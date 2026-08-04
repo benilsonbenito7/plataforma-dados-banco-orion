@@ -25,5 +25,8 @@ migrate:
 makemigrations:
 	docker compose exec api python manage.py makemigrations
 
+restart:
+	docker compose restart && docker compose down && docker compose up -d
+
 createsuperuser:
 	docker compose exec api python manage.py createsuperuser

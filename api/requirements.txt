@@ -1,4 +1,5 @@
 Django>=5.2
 django-ninja
+django-ninja-extra
 psycopg[binary]
 python-decouple
