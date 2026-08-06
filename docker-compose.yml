@@ -3,7 +3,7 @@ services:
     build: ./api
     container_name: orion_api
     ports:
-      - "8001:8000"
+      - "8000:8000"
     volumes:
       - ./api:/app
     env_file:

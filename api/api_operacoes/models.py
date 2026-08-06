@@ -54,7 +54,7 @@ class Emprestimo(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
 
     def __str__(self):
-        return f"Empréstimo R$ {self.valor} - Conta {self.conta.numero_conta}"
+        return f"Empréstimo Kz {self.valor} - Conta {self.conta.numero_conta}"
 
 
 class Pagamento(models.Model):
@@ -80,7 +80,7 @@ class Pagamento(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
 
     def __str__(self):
-        return f"Pagamento {self.categoria} - R$ {self.valor}"
+        return f"Pagamento {self.categoria} - Kz {self.valor}"
 
 
 class Transferencia(models.Model):
@@ -98,4 +98,4 @@ class Transferencia(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
 
     def __str__(self):
-        return f"Transferência R$ {self.valor} ({self.conta_origem.numero_conta} -> {self.conta_destino.numero_conta})"
+        return f"Transferência Kz {self.valor} ({self.conta_origem.numero_conta} -> {self.conta_destino.numero_conta}))"
