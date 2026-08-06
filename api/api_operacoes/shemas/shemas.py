@@ -7,62 +7,82 @@ from typing import Optional
 class ClienteSchemaOut(ModelSchema):
     class Meta:
         model = Cliente
-        fields = ['id', 'primeiro_nome', 'ultimo_nome', 'email', 'telefone', 'data_nascimento', 'data_criacao']
+        fields = '__all__'
 
 class ClienteSchemaIn(schema.Schema):
-    primeiro_nome: str
-    ultimo_nome: str
-    email: str
+    primeiro_nome: Optional[str] = None
+    ultimo_nome: Optional[str] = None
+    email: Optional[str] = None
     telefone: Optional[str] = None
+    bi: Optional[str] = None
+    nif: Optional[str] = None
+    morada: Optional[str] = None
+    provincia: Optional[str] = None
+    municipio: Optional[str] = None
     data_nascimento: Optional[str] = None
+    genero: Optional[str] = None
+    estado_civil: Optional[str] = None
+    profissao: Optional[str] = None
+    rendimento_mensal: Optional[float] = None
 
 # ===== CONTA SCHEMAS =====
 class ContaSchemaOut(ModelSchema):
     class Meta:
         model = Conta
-        fields = ['id', 'cliente', 'numero_conta', 'tipo_conta', 'saldo', 'limite', 'data_abertura', 'status']
+        fields = '__all__'
 
 class ContaSchemaIn(schema.Schema):
-    cliente: int
-    numero_conta: str
-    tipo_conta: str
-    saldo: float = 0.00
-    limite: float = 0.00
+    cliente: Optional[int] = None
+    numero_conta: Optional[str] = None
+    iban: Optional[str] = None
+    tipo_conta: Optional[str] = None
+    saldo: Optional[float] = None
+    limite: Optional[float] = None
+    moeda: Optional[str] = None
+    data_abertura: Optional[str] = None
+    status: Optional[str] = None
 
 # ===== EMPRESTIMO SCHEMAS =====
 class EmpreistimoSchemaOut(ModelSchema):
     class Meta:
         model = Emprestimo
-        fields = ['id', 'conta', 'valor', 'taxa_juros', 'data_inicio', 'data_fim', 'parcelas', 'valor_parcela', 'status']
+        fields = '__all__'
 
 class EmpreistimoSchemaIn(schema.Schema):
-    conta: int
-    valor: float
-    taxa_juros: float
-    data_inicio: str
-    data_fim: str
-    parcelas: int
+    conta: Optional[int] = None
+    valor: Optional[float] = None
+    taxa_juros: Optional[float] = None
+    data_inicio: Optional[str] = None
+    data_fim: Optional[str] = None
+    parcelas: Optional[int] = None
+    valor_parcela: Optional[float] = None
+    finalidade: Optional[str] = None
+    status: Optional[str] = None
 
 # ===== PAGAMENTO SCHEMAS =====
 class PagamentoSchemaOut(ModelSchema):
     class Meta:
         model = Pagamento
-        fields = ['id', 'conta', 'descricao', 'valor', 'data_pagamento', 'categoria', 'status']
+        fields = '__all__'
 
 class PagamentoSchemaIn(schema.Schema):
-    conta: int
-    descricao: str
-    valor: float
-    categoria: str
+    conta: Optional[int] = None
+    descricao: Optional[str] = None
+    valor: Optional[float] = None
+    data_pagamento: Optional[str] = None
+    categoria: Optional[str] = None
+    status: Optional[str] = None
 
 # ===== TRANSFERENCIA SCHEMAS =====
 class TransferenciaSchemaOut(ModelSchema):
     class Meta:
         model = Transferencia
-        fields = ['id', 'conta_origem', 'conta_destino', 'valor', 'data_transferencia', 'status']
+        fields = '__all__'
 
 class TransferenciaSchemaIn(schema.Schema):
-    conta_origem: int
-    conta_destino: int
-    valor: float
+    conta_origem: Optional[int] = None
+    conta_destino: Optional[int] = None
+    valor: Optional[float] = None
+    data_transferencia: Optional[str] = None
+    descricao: Optional[str] = None
     status: Optional[str] = None

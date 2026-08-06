@@ -1,38 +1,29 @@
 from ..models import Pagamento, Conta
-from decimal import Decimal
+from .utils import decimal_flexivel, datahora_flexivel, normalizar_texto
+
 
 class PagamentoService:
-    
+
     @staticmethod
     def criar_pagamento(data):
         try:
-            # Validar conta
-            conta = Conta.objects.get(id=data.conta)
-            
-            # Validar valor
-            if data.valor <= 0:
-                raise ValueError("Valor do pagamento deve ser maior que zero")
-            
-            # Validar categoria
-            categorias_validas = ['ENERGIA', 'AGUA', 'INTERNET', 'SALARIO', 'IMPOSTOS']
-            if data.categoria not in categorias_validas:
-                raise ValueError(f"Categoria inválida. Deve ser: {', '.join(categorias_validas)}")
-            
-            # Validar descrição
-            if not data.descricao or len(data.descricao) < 3:
-                raise ValueError("Descrição deve ter no mínimo 3 caracteres")
-            
+            conta_id = getattr(data, 'conta', None)
+            conta = None
+            if conta_id:
+                try:
+                    conta = Conta.objects.get(id=conta_id)
+                except (Conta.DoesNotExist, ValueError, TypeError):
+                    conta = None
+
             pagamento = Pagamento.objects.create(
                 conta=conta,
-                descricao=data.descricao,
-                valor=Decimal(str(data.valor)),
-                categoria=data.categoria
+                descricao=normalizar_texto(getattr(data, 'descricao', None)),
+                valor=decimal_flexivel(getattr(data, 'valor', None)),
+                data_pagamento=datahora_flexivel(getattr(data, 'data_pagamento', None)),
+                categoria=normalizar_texto(getattr(data, 'categoria', None)),
+                status=normalizar_texto(getattr(data, 'status', None)),
             )
             return pagamento
-        
-        except Conta.DoesNotExist:
-            raise ValueError("Conta não encontrada")
-        except ValueError as e:
-            raise e
+
         except Exception as e:
             raise ValueError(f"Erro ao criar pagamento: {str(e)}")

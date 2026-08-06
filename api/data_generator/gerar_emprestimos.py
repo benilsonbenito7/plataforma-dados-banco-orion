@@ -1,107 +1,45 @@
-import requests
-import random
 from datetime import date, timedelta
+import random
 
+from config_gerador import *
+from helpers import com_chance, talvez_none, enviar
+
+FINALIDADES = [
+    "Compra de casa", "Compra de carro", "Negócio próprio", "Educação",
+    "Saúde", "Eletrodomésticos", "Viagem", "Obras/reparações",
+    "Casamento", "Mobília", "Agricultura", "Comércio", None,
+]
 
 
 def gerar_emprestimos(total, contas, api_url):
+    emprestimos = []
 
+    for _ in range(total):
+        conta = random.choice(contas) if contas else None
+        if com_chance(CHANCE_EMPRESTIMO_CONTA_NULA):
+            conta = None
 
-    emprestimos=[]
+        inicio = date.today() - timedelta(days=random.randint(30, 3000))
+        fim = inicio + timedelta(days=random.choice([180, 365, 540, 730, 1095, 1460, 1825]))
 
+        # ~4% com data de fim antes do início (dados inconsistentes)
+        if com_chance(CHANCE_DATA_FIM_ANTES):
+            fim = inicio - timedelta(days=random.randint(1, 90))
 
-    for i in range(total):
-
-
-        inicio = date.today() - timedelta(
-            days=random.randint(1,1000)
-        )
-
-
-        fim = inicio + timedelta(
-            days=random.randint(365,1500)
-        )
-
-
-        data={
-
-
-            "conta":
-                random.choice(contas),
-
-
-            "valor":
-                round(
-                    random.uniform(
-                        5000,
-                        500000
-                    ),
-                    2
-                ),
-
-
-            "taxa_juros":
-                round(
-                    random.uniform(
-                        1,
-                        20
-                    ),
-                    2
-                ),
-
-
-            "data_inicio":
-                inicio.isoformat(),
-
-
-            "data_fim":
-                fim.isoformat(),
-
-
-            "parcelas":
-                random.choice(
-                    [6,12,18,24,36]
-                ),
-
-
-            "valor_parcela":
-                round(
-                    random.uniform(
-                        500,
-                        50000
-                    ),
-                    2
-                ),
-
-
-            "status":
-                random.choice(
-                    [
-                    "PENDENTE",
-                    "APROVADO",
-                    "QUITADO",
-                    "REJEITADO"
-                    ]
-                )
+        data = {
+            "conta": conta,
+            "valor": talvez_none(round(random.uniform(20000, 15000000), 2), CHANCE_VALOR_NULO),
+            "taxa_juros": talvez_none(round(random.uniform(2, 24), 2), CHANCE_TAXA_NULA),
+            "data_inicio": talvez_none(inicio.isoformat(), CHANCE_DATAS_NULAS),
+            "data_fim": talvez_none(fim.isoformat(), CHANCE_DATAS_NULAS),
+            "parcelas": talvez_none(random.choice([6, 12, 18, 24, 36, 48, 60]), CHANCE_PARCELAS_NULAS),
+            "valor_parcela": talvez_none(round(random.uniform(5000, 500000), 2), CHANCE_VALOR_NULO),
+            "finalidade": talvez_none(random.choice(FINALIDADES), CHANCE_FINALIDADE_NULA),
+            "status": random.choice(["PENDENTE", "PENDENTE", "APROVADO", "APROVADO", "QUITADO", "REJEITADO"]),
         }
 
-
-
-        response=requests.post(
-            f"{api_url}/emprestimos",
-            json=data
-        )
-
-
-        if response.status_code==200:
-
-            emprestimos.append(
-                response.json()["id"]
-            )
-
-        else:
-            print(response.text)
-
-
+        novo_id = enviar(api_url, "emprestimos", data)
+        if novo_id:
+            emprestimos.append(novo_id)
 
     return emprestimos

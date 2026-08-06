@@ -1,33 +1,36 @@
 from ..models import Conta, Cliente
-from decimal import Decimal
+from .utils import decimal_flexivel, datahora_flexivel, normalizar_texto
+
 
 class ContaService:
-    
+
     @staticmethod
     def criar_conta(data):
         try:
-            # Validar cliente
-            cliente = Cliente.objects.get(id=data.cliente)
-            
-            # Validar número de conta único
-            if Conta.objects.filter(numero_conta=data.numero_conta).exists():
-                raise ValueError("Número de conta já existe")
-            
-            # Validar tipo de conta
-            tipos_validos = ['CORRENTE', 'POUPANCA', 'INVESTIMENTO']
-            if data.tipo_conta not in tipos_validos:
-                raise ValueError(f"Tipo de conta inválido. Deve ser: {', '.join(tipos_validos)}")
-            
+            cliente_id = getattr(data, 'cliente', None)
+            cliente = None
+            if cliente_id:
+                try:
+                    cliente = Cliente.objects.get(id=cliente_id)
+                except (Cliente.DoesNotExist, ValueError, TypeError):
+                    cliente = None
+
+            numero_conta = normalizar_texto(getattr(data, 'numero_conta', None))
+            if not numero_conta:
+                numero_conta = f"ORION{Conta.objects.count() + 1:08d}"
+
             conta = Conta.objects.create(
                 cliente=cliente,
-                numero_conta=data.numero_conta,
-                tipo_conta=data.tipo_conta,
-                saldo=Decimal(str(data.saldo)),
-                limite=Decimal(str(data.limite))
+                numero_conta=numero_conta,
+                iban=normalizar_texto(getattr(data, 'iban', None)),
+                tipo_conta=normalizar_texto(getattr(data, 'tipo_conta', None)),
+                saldo=decimal_flexivel(getattr(data, 'saldo', None)),
+                limite=decimal_flexivel(getattr(data, 'limite', None)),
+                moeda=normalizar_texto(getattr(data, 'moeda', None)),
+                data_abertura=datahora_flexivel(getattr(data, 'data_abertura', None)),
+                status=normalizar_texto(getattr(data, 'status', None)),
             )
             return conta
-        
-        except Cliente.DoesNotExist:
-            raise ValueError("Cliente não encontrado")
+
         except Exception as e:
             raise ValueError(f"Erro ao criar conta: {str(e)}")
